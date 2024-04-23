@@ -1,12 +1,27 @@
-name: First Pipeline
-run-name: ${{ github.actor }} is learning GitHub Actions
-on: [push]
-jobs:
-  runs-on: ubuntu-latest
-  steps:
-    -name : hello-world
-     run : echo 'hello world'
+# name: First Pipeline
+# run-name: ${{ github.actor }} is learning GitHub Actions
+# on: [push]
+# jobs:
+#   runs-on: ubuntu-latest
+#   steps:
+#     -name : hello-world
+#      run : echo hello world
 
-     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      env:
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+name: Hello World
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Hello World
+        run: echo "Hello, World!"
