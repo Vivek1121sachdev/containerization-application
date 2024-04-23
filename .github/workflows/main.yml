@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name : 
+      - name: checkout repo
+        uses: actions/checkout@main
+      - name : terraform plan
         run : make plan
 
         env:
