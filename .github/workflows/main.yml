@@ -16,25 +16,13 @@ jobs:
       - name : terraform init
         run : make init
 
-      - name : terraform plan
+      - name : planning resources
         run : make plan
+      
+      # - name : applying resources
+      #   run : make apply
 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
-
-# name: Hello World
-
-# on:
-#   push:
-#     branches:
-#       - dev
-
-# jobs:
-#   hello_world_job:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Print Hello World
-#         run: echo "Hello, World!"

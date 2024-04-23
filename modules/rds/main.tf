@@ -1,3 +1,7 @@
+##################
+# Security Group #
+##################
+
 resource "aws_security_group" "db_sg" {
   name_prefix = "${var.tag_prefix}"
   vpc_id = var.vpc_id
@@ -9,10 +13,18 @@ resource "aws_security_group" "db_sg" {
   }
 }
 
+#########################
+# Database Subnet Group #
+#########################
+
 resource "aws_db_subnet_group" "db_subnet_grp" {
   name       = var.db_subnet_group_name
   subnet_ids = var.private_subnets
 }
+
+#####################
+# Database Instance #
+#####################
 
 resource "aws_db_instance" "rds" {
   identifier             = var.db-identifier-name

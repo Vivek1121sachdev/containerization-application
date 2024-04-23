@@ -76,10 +76,13 @@ module "ecr" {
 
 module "ecs" {
   source = ".\\modules\\ecs"
+  ecs_sg_name = "CA-ECS-SG"
+  sg_protocol = "tcp"
   app_port = 3000
   lb_sg = [module.alb.lb_sg_id]
   vpc_id = module.vpc.vpc_id
   cluster_name = "cluster"
+  task_defination_family_name = "CA-app-task"
   ecr_image = "${module.ecr.repository_url}:${data.aws_ecr_image.image.image_tags[0]}"
   private_subnet = module.vpc.private_subnet_id
   tg_arn = module.alb.tg_arn

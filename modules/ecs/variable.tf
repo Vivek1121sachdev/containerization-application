@@ -10,6 +10,22 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "ecs_sg_name" {
+  type = string
+  description = "ECR Security Group Name"
+}
+
+variable "sg_description" {
+  type = string
+  description = "Description for ECR SG"
+  default = "allow inbound access from the ALB only"
+}
+
+variable "sg_protocol" {
+  type = string
+  description = "Protocol type for ECR SG"
+}
+
 variable "app_port" {
   type = number
   description = "application port"
@@ -34,6 +50,11 @@ variable "vpc_id" {
 variable "cluster_name" {
   type = string
   description = "cluster name"
+}
+
+variable "task_defination_family_name" {
+  type = string
+  description = "Name for task definition"
 }
 
 variable "ecr_image" {

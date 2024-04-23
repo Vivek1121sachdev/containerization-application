@@ -4,12 +4,12 @@
 
 # Traffic to the ECS cluster should only come from the ALB
 resource "aws_security_group" "ecs_sg" {
-    name        = "${var.tag_prefix}-ecs-tasks-security-group"
-    description = "allow inbound access from the ALB only"
+    name        = var.ecs_sg_name
+    description = var.sg_description
     vpc_id      = var.vpc_id
 
     ingress {
-        protocol        = "tcp"
+        protocol        = var.sg_protocol
         from_port       = var.app_port
         to_port         = var.app_port
         security_groups = var.lb_sg
@@ -36,7 +36,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 #######################
 
 resource "aws_ecs_task_definition" "task_defination" {
-    family                   = "${var.tag_prefix}-app-task"
+    family                   = var.task_defination_family_name
     requires_compatibilities = ["FARGATE"]
     network_mode             = "awsvpc"
     cpu                      = var.fargate_cpu
