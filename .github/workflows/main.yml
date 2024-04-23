@@ -11,7 +11,11 @@ jobs:
     
     steps:
       - name: checkout repo
-        uses: actions/checkout@main
+        uses: actions/checkout@dev
+
+      - name : terraform init
+        run : make init
+
       - name : terraform plan
         run : make plan
 
