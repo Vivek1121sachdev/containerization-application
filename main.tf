@@ -97,12 +97,25 @@ module "cloudwatch" {
   log_group_name = "/ecs/CA-App"
 }
 
+#---------------#
+# SSM Parameter #
+#---------------#
+
+resource "aws_ssm_parameter" "rds_credentials" {
+  for_each = local.parameter
+
+  name  = each.key
+  value = each.value
+  type  = "String"
+}
+
 #-----#
 # RDS #
 #-----#
 
 module "rds" {
   source = ".\\modules\\rds"
+  credentials = local.parameter
   private_subnets = module.vpc.private_subnet_id
   db_subnet_group_name = "ca-db-subnet-group"
   db-identifier-name = "ca-rds-database"

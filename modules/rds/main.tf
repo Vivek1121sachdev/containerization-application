@@ -32,8 +32,8 @@ resource "aws_db_instance" "rds" {
   allocated_storage      = var.storage_allocaiton
   engine                 = var.engine_type
   engine_version         = var.engine_version
-  username               = var.username
-  password               = var.db_password
+  username               = element(local.username,0)
+  password               = element(local.password,0)
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_grp.name
   vpc_security_group_ids = [aws_security_group.db_sg.id]
   publicly_accessible    = var.publicly_accessible

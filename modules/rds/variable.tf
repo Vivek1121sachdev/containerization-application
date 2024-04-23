@@ -91,3 +91,8 @@ variable "vpc_id" {
   type = string
   description = "vpc id"
 }
+
+variable "credentials" {
+  type = map
+  description = "RDS credentials from ssm parameter store"
+}
