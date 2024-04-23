@@ -16,7 +16,7 @@ push_img:
 	cd ..
 
 plan:
-	terraform plan
+	@terraform plan
 
 apply:
 	terraform apply --auto-approve

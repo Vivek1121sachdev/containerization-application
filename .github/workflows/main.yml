@@ -6,11 +6,11 @@ on:
       - dev
 
 jobs:
-  bucket_listing_job:
+  terraform_job:
     runs-on: ubuntu-latest
     
     steps:
-      - name : terraform plan
+      - name : 
         run : make plan
 
         env:
