@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      -name : hello-world
-      run : aws s3 ls
+      - name : hello-world
+        run : aws s3 ls
 
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 # name: Hello World
 
