@@ -9,6 +9,9 @@ init:
 ecr_repo:
 	terraform apply -target=module.ecr --auto-approve
 
+ssm_params:
+	terraform apply -target=aws_ssm_parameter.rds_credentials --auto-approve
+
 push_img:
 	cd code && \
 	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com && \

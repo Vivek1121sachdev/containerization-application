@@ -11,53 +11,29 @@ provider "aws" {
 #-----#
 
 module "vpc" {
-  source               = ".\\modules\\vpc"
-  tag-prefix           = "CA"
-  vpc_ip               = "10.0.0.0/16"
-  public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
-  private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
-  availability_zone    = ["us-east-1a","us-east-1b"]
+  source             = ".\\modules\\vpc"
+  tag-prefix         = "CA"
+  vpc_ip             = "10.0.0.0/16"
+  public_cidr_block  = "0.0.0.0/0"
+  public_subnet      = { "us-east-1a" = "10.0.1.0/24", "us-east-1b" = "10.0.2.0/24" }
+  private_subnet_ecs = { "us-east-1a" = "10.0.3.0/24", "us-east-1b" = "10.0.4.0/24" }
+  private_subnet_rds = { "us-east-1a" = "10.0.5.0/24", "us-east-1b" = "10.0.6.0/24" }
 }
 
-#----------#
-# Gateways #
-# ---------#
-
-module "GW" {
-  source           = ".\\modules\\GW"
-  tag-prefix       = "CA"
-  vpc_id           = module.vpc.vpc_id
-  public_subnet_id = module.vpc.public_subnet_id[0]
-}
-
-#--------------#
-# Route Tables #
-#--------------#
-
-module "RT" {
-  source            = ".\\modules\\RT"
-  tag-prefix        = "CA"
-  cidr_block        = "0.0.0.0/0"
-  vpc_id            = module.vpc.vpc_id
-  ig_id             = module.GW.ig_id
-  nat_gw_id         = module.GW.nat_gw_id
-  public_subnet_id  = module.vpc.public_subnet_id
-  private_subnet_id = module.vpc.private_subnet_id
-}
 
 #---------------------------#
 # Application Load Balancer #
 #---------------------------#
 
 module "alb" {
-  source   = ".\\modules\\alb"
-  lb_name = "CA-Load-Balancer"
-  lb_type = "application"
-  tg_name = "CA-Target-Group"
-  target_type = "ip"
-  action_type = "forward"
-  vpc_id = module.vpc.vpc_id
-  app_port = 3000
+  source           = ".\\modules\\alb"
+  lb_name          = "CA-Load-Balancer"
+  lb_type          = "application"
+  tg_name          = "CA-Target-Group"
+  target_type      = "ip"
+  action_type      = "forward"
+  vpc_id           = module.vpc.vpc_id
+  app_port         = 3000
   public_subnet_id = module.vpc.public_subnet_id
 }
 
@@ -66,7 +42,7 @@ module "alb" {
 #-----#
 
 module "ecr" {
-  source = ".\\modules\\ecr"
+  source          = ".\\modules\\ecr"
   repository_name = "container-application"
 }
 
@@ -75,17 +51,19 @@ module "ecr" {
 #-----#
 
 module "ecs" {
-  source = ".\\modules\\ecs"
-  ecs_sg_name = "CA-ECS-SG"
-  sg_protocol = "tcp"
-  app_port = 3000
-  lb_sg = [module.alb.lb_sg_id]
-  vpc_id = module.vpc.vpc_id
-  cluster_name = "cluster"
+  source                      = ".\\modules\\ecs"
+  ecs_sg_name                 = "CA-ECS-SG"
+  sg_protocol                 = "tcp"
+  app_port                    = 3000
+  lb_sg                       = [module.alb.lb_sg_id]
+  vpc_id                      = module.vpc.vpc_id
+  cluster_name                = "cluster"
   task_defination_family_name = "CA-app-task"
-  ecr_image = "${module.ecr.repository_url}:${data.aws_ecr_image.image.image_tags[0]}"
-  private_subnet = module.vpc.private_subnet_id
-  tg_arn = module.alb.tg_arn
+  app_env                     = ["FARGATE"]
+  network_mode                = "awsvpc"
+  ecr_image                   = "${module.ecr.repository_url}:${data.aws_ecr_image.image.image_tags[0]}"
+  private_subnet              = module.vpc.private_subnet_ecs_id
+  tg_arn                      = module.alb.tg_arn
 }
 
 #----------------------#
@@ -93,7 +71,7 @@ module "ecs" {
 #----------------------#
 
 module "cloudwatch" {
-  source = ".\\modules\\cloudwatch"
+  source         = ".\\modules\\cloudwatch"
   log_group_name = "/ecs/CA-App"
 }
 
@@ -114,16 +92,16 @@ resource "aws_ssm_parameter" "rds_credentials" {
 #-----#
 
 module "rds" {
-  source = ".\\modules\\rds"
-  credentials = local.parameter
-  private_subnets = module.vpc.private_subnet_id
+  source               = ".\\modules\\rds"
+  credentials          = local.parameter
+  private_subnets      = module.vpc.private_subnet_rds_id
   db_subnet_group_name = "ca-db-subnet-group"
-  db-identifier-name = "ca-rds-database"
-  ecs_sg = module.ecs.ecs_sg
-  vpc_id =  module.vpc.vpc_id
-  instance_class = "db.t3.micro"
-  storage_allocaiton = 10
-  engine_type = "postgres"
-  engine_version = "16.2"
-  username = "vivek"
+  db-identifier-name   = "ca-rds-database"
+  ecs_sg               = module.ecs.ecs_sg
+  vpc_id               = module.vpc.vpc_id
+  instance_class       = "db.t3.micro"
+  storage_allocaiton   = 10
+  engine_type          = "postgres"
+  engine_version       = "16.2"
+  username             = "vivek"
 }

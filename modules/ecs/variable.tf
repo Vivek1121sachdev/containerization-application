@@ -32,6 +32,16 @@ variable "app_port" {
   default = 3000
 }
 
+variable "app_env" {
+  type = list
+  description = "Environment for Running Container"
+}
+
+variable "network_mode" {
+  type = string
+  description = "Describing the Networking Mode"
+}
+
 variable "lb_sg" {
   type = list(string)
   description = "load balancer sg id"

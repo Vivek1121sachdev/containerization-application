@@ -10,17 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: checkout repo
+      - name: Checking Out Repository
         uses: actions/checkout@main
 
-      - name : terraform init
+      - name : Initializing Terraform
         run : make init
 
-      - name : planning resources
+      - name : Creating Plan of Resources
         run : make plan
       
-      # - name : applying resources
-      #   run : make apply
+      - name : creating ECR Repository
+        run : make ecr_repo
+      
+      - name : Pushing Image to ECR Repository
+        run : make push_img
+      
+      - name : Creating SSM Parameters
+        run : make ssm_params
+      
+      - name : Creating Remaining Resources
+        run : make  apply
 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
