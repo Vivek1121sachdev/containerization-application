@@ -1,6 +1,6 @@
 data "aws_ecr_image" "image" {
   repository_name = module.ecr.repository_name
-  most_recent     = true
+  image_tag       = "12345"
 }
 
 locals {

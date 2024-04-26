@@ -79,7 +79,7 @@ resource "aws_internet_gateway" "igw" {
 ##############
 
 resource "aws_eip" "eip" {
-  domain = "vpc"
+  # domain = "vpc"
 
   tags = {
     Name = "${var.tag-prefix}-EIP"
