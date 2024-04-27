@@ -7,36 +7,20 @@ on:
 
 jobs:
   terraform_job:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checking Out Repository
         uses: actions/checkout@main
       
-      - name: Download Terraform
-        run: |
-          Invoke-WebRequest -Uri "https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_windows_amd64.zip" -OutFile terraform.zip
-          Expand-Archive -Path terraform.zip -DestinationPath $env:ProgramFiles\Terraform
-
-      - name: Add Terraform to PATH
-        run: |
-          $env:Path += ";$env:ProgramFiles\Terraform"
-          [System.Environment]::SetEnvironmentVariable('Path', $env:Path, [System.EnvironmentVariableTarget]::Machine)
-
-      - name: Verify Terraform installation
-        run: terraform --version
-
       - name: Deploy to AWS
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      
+          sudo apt-get install -y powershell
 
       - name : Initializing Terraform
         run : make init
-      
-      - name : Creating SSM Parameters
-        run : make ssm_params
       
       - name : creating ECR Repository
         run : make ecr_repo
@@ -44,13 +28,16 @@ jobs:
       - name : Pushing Image to ECR Repository
         run : make push_img
 
+      - name : Creating SSM Parameters
+        run : make ssm_params
+
       - name : Creating Plan of Resources
         run : make plan
       
       - name : Creating Remaining Resources
         run : make  apply
 
-        # env:
-        #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        #   AWS_DEFAULT_REGION: 'us-east-1'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
