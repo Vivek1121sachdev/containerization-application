@@ -20,23 +20,23 @@ jobs:
 
       - name : Initializing Terraform
         run : make init
-
-      - name : Creating Plan of Resources
-        run : make plan
+      
+      - name : Creating SSM Parameters
+        run : make ssm_params
       
       - name : creating ECR Repository
         run : make ecr_repo
       
       - name : Pushing Image to ECR Repository
         run : make push_img
-      
-      - name : Creating SSM Parameters
-        run : make ssm_params
+
+      - name : Creating Plan of Resources
+        run : make plan
       
       - name : Creating Remaining Resources
         run : make  apply
 
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'us-east-1'
+        # env:
+        #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #   AWS_DEFAULT_REGION: 'us-east-1'
