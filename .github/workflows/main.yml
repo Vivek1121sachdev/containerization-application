@@ -13,11 +13,24 @@ jobs:
       - name: Checking Out Repository
         uses: actions/checkout@main
       
+    - name: Download Terraform
+        run: |
+          Invoke-WebRequest -Uri "https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_windows_amd64.zip" -OutFile terraform.zip
+          Expand-Archive -Path terraform.zip -DestinationPath $env:ProgramFiles\Terraform
+
+      - name: Add Terraform to PATH
+        run: |
+          $env:Path += ";$env:ProgramFiles\Terraform"
+          [System.Environment]::SetEnvironmentVariable('Path', $env:Path, [System.EnvironmentVariableTarget]::Machine)
+
+      - name: Verify Terraform installation
+        run: terraform --version
+
       - name: Deploy to AWS
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          terraform --version
+      
 
       - name : Initializing Terraform
         run : make init
