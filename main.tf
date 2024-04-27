@@ -95,6 +95,7 @@ resource "aws_ssm_parameter" "rds_credentials" {
   name  = each.key
   value = each.value
   type  = "String"
+  overwrite = true
 }
 
 #-----#
