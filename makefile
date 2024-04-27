@@ -15,7 +15,7 @@ ssm_params:
 push_img:
 	cd code && \
 	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com && \
-	powershell.exe -ExecutionPolicy Bypass -File .\ecr_img_push.ps1 $(AWS_REGION) $(AWS_ACCOUNT_ID) $(ECR_REPO_NAME) "$(HashValue)" && \
+	pwsh -ExecutionPolicy Bypass -File .\ecr_img_push.ps1 $(AWS_REGION) $(AWS_ACCOUNT_ID) $(ECR_REPO_NAME) "$(HashValue)" && \
 	cd ..
 
 plan:

@@ -17,6 +17,7 @@ jobs:
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          sudo apt-get update
           sudo apt-get install -y powershell
 
       - name : Initializing Terraform
